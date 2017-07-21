@@ -24,9 +24,17 @@ const createUser = async (root, data, { mongo: { Users } }) => {
     return Object.assign({ id: response.insertedIds[0] }, newUser);
 };
 
+const signinUser = async (root, data, { mongo: { Users } }) => {
+    const { email } = data.email;
+    const user = await Users.findOne({ email });
+    if (data.email.password === user.password) {
+        return { token: `token-${user.email}`, user };
+    }
+};
+
 module.exports = {
     Query   : { allLinks, allUsers },
-    Mutation: { createLink, createUser },
+    Mutation: { createLink, createUser, signinUser },
     Link: { id },
     User: { id }
 };

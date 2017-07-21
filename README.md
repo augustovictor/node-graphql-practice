@@ -5,7 +5,8 @@
 - Schema
 - Queries: Fetch
     - Query resolver: How queries are handled
-- Mutations: Insert/Update/Delete
+- Mutations: Insert/Update/Delete/Auth
+    - Used when a client need to perform any operation from server side
 - Subscription
 
 ## Workflow
