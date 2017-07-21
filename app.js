@@ -1,10 +1,11 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+const express                             = require('express');
+const bodyParser                          = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('graphql-server-express');
-const schema = require('./src/schema');
+const schema                              = require('./src/schema');
 
-const { connectMongo } = require('./src/db/mongoose');
-const { auth } = require('./src/auth');
+const { connectMongo }                    = require('./src/db/mongoose');
+const { auth }                            = require('./src/auth');
+const buildDataLoaders                    = require('./src/dataloaders');
 
 const start = async () => {
     const mongo = await connectMongo();
@@ -12,7 +13,11 @@ const start = async () => {
     const buildOptions = async (req, res) => {
         const user = await auth(req, mongo.Users);
         return {
-            context: { mongo, user }, // passed to all resolvers
+            context: {
+                dataloaders: buildDataLoaders(mongo),
+                mongo,
+                user
+            }, // passed to all resolvers
             schema
         }
     }
