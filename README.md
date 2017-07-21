@@ -16,7 +16,7 @@
 4. Test if it is working :)
 
 ## Scripts
-### Signin
+### SignIn
 ```js
 mutation SignIn {
   signinUser(
@@ -30,6 +30,32 @@ mutation SignIn {
       name
       email
     }
+  }
+}
+```
+
+### CreateLink
+```js
+mutation CreateLink {
+  createLink(
+    url:"urlcomplete"
+    description:"urlcomplete description"
+  ) {
+    id url description
+    postedBy{
+      name
+    }
+  }
+}
+```
+
+### Create vote
+```js
+mutation CreateVote {
+  createVote(linkId: "597258520c3c1621651c3b26") {
+    id
+    user {name}
+    link {url}
   }
 }
 ```

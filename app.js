@@ -12,7 +12,7 @@ const start = async () => {
     const buildOptions = async (req, res) => {
         const user = await auth(req, mongo.Users);
         return {
-            context: { mongo }, // passed to all resolvers
+            context: { mongo, user }, // passed to all resolvers
             schema
         }
     }
@@ -21,7 +21,8 @@ const start = async () => {
     app.use('/graphql', bodyParser.json(), graphqlExpress(buildOptions));
 
     app.use('/graphiql', graphiqlExpress({
-        endpointURL: '/graphql'
+        endpointURL: '/graphql',
+        passHeader: `'Authorization': 'bearer token-victoraweb@gmail.com'`
     }))
 
     app.listen(3000, () => console.log(`Running on port ${3000}`));

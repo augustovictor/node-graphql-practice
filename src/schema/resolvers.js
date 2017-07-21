@@ -1,5 +1,9 @@
+const { ObjectID } = require('mongodb');
+
+// SHARED
 const id = root => root._id || root.id;
 
+// LINKS
 const link = {
     id,
     postedBy: async ({ postedById }, data, { mongo: { Users } }) => {
@@ -17,6 +21,7 @@ const createLink = async (root, data, { mongo: { Links }, user }) => {
     return Object.assign({ id: response.insertedIds[0] }, newLink);
 };
 
+// USERS
 const allUsers = async (root, data, { mongo: { Users } }) => {
     return await Users.find({}).toArray();
 };
@@ -40,9 +45,30 @@ const signinUser = async (root, data, { mongo: { Users } }) => {
     }
 };
 
+// VOTES
+const vote = {
+    id,
+    user: async ({ userId }, data, { mongo: { Users } }) => {
+        return await Users.findOne({ _id: userId });
+    },
+    link: async ({ linkId }, data, { mongo: { Links } }) => {
+        return await Links.findOne({ _id: linkId });
+    }
+}
+
+const createVote = async (root, data, { mongo: { Votes }, user }) => {
+    const newVote = {
+        userId: user && user._id,
+        linkId: new ObjectID(data.linkId)
+    };
+    const response = await Votes.insert(newVote);
+    return Object.assign({ id: response.insertedIds[0] }, newVote);
+};
+
 module.exports = {
     Query   : { allLinks, allUsers },
-    Mutation: { createLink, createUser, signinUser },
+    Mutation: { createLink, createUser, signinUser, createVote },
     Link: link,
-    User: { id }
+    User: { id },
+    Vote: vote
 };
