@@ -25,6 +25,12 @@ const createLink = async (root, data, { mongo: { Links }, user }) => {
 };
 
 // USERS
+const user = {
+    id,
+    votes: async ({ _id }, data, { mongo: { Votes } }) => {
+        return await Votes.find({ userId: _id }).toArray();
+    }
+};
 const allUsers = async (root, data, { mongo: { Users } }) => {
     return await Users.find({}).toArray();
 };
@@ -72,6 +78,6 @@ module.exports = {
     Query   : { allLinks, allUsers },
     Mutation: { createLink, createUser, signinUser, createVote },
     Link: link,
-    User: { id },
+    User: user,
     Vote: vote
 };
