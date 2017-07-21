@@ -3,13 +3,24 @@ const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('graphql-server-express');
 const schema = require('./src/schema');
 
-const app = express();
+const { connectMongo } = require('./src/db/mongoose');
 
-app.use(bodyParser.json());
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+const start = async () => {
+    const mongo = await connectMongo();
+    const app = express();
 
-app.use('/graphiql', graphiqlExpress({
-    endpointURL: '/graphql'
-}))
+    app.use(bodyParser.json());
+    app.use('/graphql', bodyParser.json(), graphqlExpress({
+        context: { mongo },
+        schema
+    }));
 
-app.listen(3000, () => console.log(`Running on port ${3000}`));
+    app.use('/graphiql', graphiqlExpress({
+        endpointURL: '/graphql'
+    }))
+
+    app.listen(3000, () => console.log(`Running on port ${3000}`));
+};
+
+start();
+
