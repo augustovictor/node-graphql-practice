@@ -6,6 +6,7 @@ const schema                              = require('./src/schema');
 const { connectMongo }                    = require('./src/db/mongoose');
 const { auth }                            = require('./src/auth');
 const buildDataLoaders                    = require('./src/dataloaders');
+const formatError                         = require('./src/formatError');
 
 const start = async () => {
     const mongo = await connectMongo();
@@ -13,11 +14,12 @@ const start = async () => {
     const buildOptions = async (req, res) => {
         const user = await auth(req, mongo.Users);
         return {
-            context: {
+            context: { // passed to all resolvers
                 dataloaders: buildDataLoaders(mongo),
                 mongo,
                 user
-            }, // passed to all resolvers
+            },
+            formatError,
             schema
         }
     }

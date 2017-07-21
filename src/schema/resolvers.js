@@ -1,9 +1,19 @@
 const { ObjectID } = require('mongodb');
+const { URL } = require('url');
+const { ValidationError } = require('../ValidationError');
 
 // SHARED
 const id = root => root._id || root.id;
 
 // LINKS
+const assertValidLink = ({ url }) => {
+    try {
+        new URL(url);
+    } catch(err) {
+        throw new ValidationError('Link validation error: invalid url', 'url');
+    }
+}
+
 const link = {
     id,
     postedBy: async ({ postedById }, data, { dataloaders: { userLoader } }) => {
@@ -19,6 +29,7 @@ const allLinks = async (root, data, { mongo: { Links } }) => {
 };
 
 const createLink = async (root, data, { mongo: { Links }, user }) => {
+    assertValidLink(data);
     const newLink = Object.assign({ postedById: user && user._id }, data);
     const response = await Links.insert(newLink);
     return Object.assign({ id: response.insertedIds[0] }, newLink);
