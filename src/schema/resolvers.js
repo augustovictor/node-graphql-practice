@@ -11,8 +11,15 @@ const links = [
     },
 ];
 
+const allLinks = () => links;
+
+const createLink = (_, data) => {
+    const newLink = Object.assign({ id: links.length + 1}, data);
+    links.push(newLink);
+    return newLink;
+}
+
 module.exports = {
-    Query: {
-        allLinks: () => links,
-    },
+    Query   : { allLinks },
+    Mutation: { createLink }
 };
