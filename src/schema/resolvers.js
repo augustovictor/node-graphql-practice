@@ -1,12 +1,20 @@
 const id = root => root._id || root.id;
 
+const link = {
+    id,
+    postedBy: async ({ postedById }, data, { mongo: { Users } }) => {
+        return await Users.findOne({ _id: postedById });
+    }
+};
+
 const allLinks = async (root, data, { mongo: { Links } }) => {
     return await Links.find({}).toArray();
 };
 
-const createLink = async (root, data, { mongo: { Links } }) => {
-    const response = await Links.insert(data);
-    return Object.assign({ id: response.insertedIds[0] }, data);
+const createLink = async (root, data, { mongo: { Links }, user }) => {
+    const newLink = Object.assign({ postedById: user && user._id }, data);
+    const response = await Links.insert(newLink);
+    return Object.assign({ id: response.insertedIds[0] }, newLink);
 };
 
 const allUsers = async (root, data, { mongo: { Users } }) => {
@@ -35,6 +43,6 @@ const signinUser = async (root, data, { mongo: { Users } }) => {
 module.exports = {
     Query   : { allLinks, allUsers },
     Mutation: { createLink, createUser, signinUser },
-    Link: { id },
+    Link: link,
     User: { id }
 };

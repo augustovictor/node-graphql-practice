@@ -14,3 +14,22 @@
 2. Create a new MongoDB collection to store entities;
 3. Add a resolver for the mutation, using the DB to store data;
 4. Test if it is working :)
+
+## Scripts
+### Signin
+```js
+mutation SignIn {
+  signinUser(
+    email: {
+      email: "victoraweb@gmail.com"
+      password: "12345"
+    }
+  ) {
+    token
+    user {
+      name
+      email
+    }
+  }
+}
+```
